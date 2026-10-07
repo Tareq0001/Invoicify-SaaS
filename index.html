@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Invoicify SaaS | نظام إدارة وفواتير الأعمال الذكي</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-layout">
+    <!-- Navbar -->
+    <header class="navbar">
+      <div class="nav-brand">
+        <div class="brand-icon">🧾</div>
+        <div class="brand-info">
+          <span class="brand-name">Invoicify</span>
+          <span class="plan-pill" id="currentPlanBadge">FREE TIER</span>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <button class="nav-link active" data-tab="builder" data-i18n="navBuilder">محرر الفاتورة</button>
+        <button class="nav-link" data-tab="history" data-i18n="navHistory">سجل الفواتير</button>
+        <button class="nav-link" data-tab="pricing" data-i18n="navPricing">باقات الاشتراك</button>
+      </nav>
+
+      <div class="nav-actions">
+        <button id="upgradeBtn" class="btn btn-pro" data-i18n="btnUpgrade">ترقية إلى Pro 🚀</button>
+        <button id="langToggleBtn" class="btn btn-ghost">
+          <span>🌐</span>
+          <span id="langText">English</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Views Container -->
+    <main class="main-content">
+      <!-- VIEW 1: Invoice Builder -->
+      <section id="builderView" class="view-section active">
+        <!-- Action Toolbar -->
+        <div class="builder-toolbar">
+          <div class="toolbar-left">
+            <h2 data-i18n="builderTitle">إنشاء فاتورة ضريبية جديدة</h2>
+            <p class="text-muted" data-i18n="builderSubtitle">متوافقة مع متطلبات الفاتورة الإلكترونية والضريبة المضافة</p>
+          </div>
+          <div class="toolbar-buttons">
+            <button id="saveDraftBtn" class="btn btn-secondary">
+              <span>💾</span>
+              <span data-i18n="btnSaveDraft">حفظ الفاتورة</span>
+            </button>
+            <button id="printBtn" class="btn btn-primary">
+              <span>🖨️</span>
+              <span data-i18n="btnPrint">طباعة / تحميل PDF</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Invoice Paper Document -->
+        <div class="invoice-paper" id="invoicePaper">
+          <!-- Document Header -->
+          <div class="paper-header">
+            <div class="company-meta">
+              <input type="text" id="sellerName" class="paper-input brand-input" value="مؤسسة الابتكار الرقمي" placeholder="اسم الشركة / المؤسسة">
+              <input type="text" id="sellerVat" class="paper-input sub-input" value="الرقم الضريبي: 300987654300003" placeholder="الرقم الضريبي">
+              <input type="text" id="sellerAddress" class="paper-input sub-input" value="طريق الملك فهد، أبها، المملكة العربية السعودية" placeholder="العنوان">
+              <input type="text" id="sellerEmail" class="paper-input sub-input" value="billing@innovation-digital.sa" placeholder="البريد الإلكتروني">
+            </div>
+
+            <div class="invoice-summary-box">
+              <h1 class="invoice-title" data-i18n="docTitle">فاتورة ضريبية</h1>
+              <div class="meta-field">
+                <label data-i18n="lblInvNo">رقم الفاتورة:</label>
+                <input type="text" id="invoiceNumber" class="paper-input meta-input" value="INV-2026-089">
+              </div>
+              <div class="meta-field">
+                <label data-i18n="lblDate">تاريخ الإصدار:</label>
+                <input type="date" id="invoiceDate" class="paper-input meta-input">
+              </div>
+              <div class="meta-field">
+                <label data-i18n="lblDueDate">تاريخ الاستحقاق:</label>
+                <input type="date" id="dueDate" class="paper-input meta-input">
+              </div>
+              <div class="meta-field">
+                <label data-i18n="lblCurrency">العملة:</label>
+                <select id="currencySelect" class="paper-select">
+                  <option value="SAR">ريال سعودي (SAR)</option>
+                  <option value="USD">دولار أمريكي (USD)</option>
+                  <option value="EUR">يورو (EUR)</option>
+                  <option value="AED">درهم إماراتي (AED)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <hr class="paper-divider">
+
+          <!-- Bill To Section -->
+          <div class="bill-to-section">
+            <h3 class="section-title" data-i18n="billToTitle">فاتورة إلى (العميل):</h3>
+            <div class="client-grid">
+              <input type="text" id="clientName" class="paper-input" value="شركة الحلول المتطورة المحدودة" placeholder="اسم العميل / الشركة">
+              <input type="text" id="clientVat" class="paper-input" value="الرقم الضريبي: 310554433200003" placeholder="الرقم الضريبي للعميل (اختياري)">
+              <input type="text" id="clientAddress" class="paper-input" value="شارع الأمير سلطان، الرياض" placeholder="عنوان العميل">
+              <input type="text" id="clientEmail" class="paper-input" value="accounts@advanced-solutions.com" placeholder="البريد الإلكتروني">
+            </div>
+          </div>
+
+          <!-- Line Items Table -->
+          <div class="items-table-wrapper">
+            <table class="items-table" id="itemsTable">
+              <thead>
+                <tr>
+                  <th style="width: 45%;" data-i18n="colDesc">الوصف والخدمة</th>
+                  <th style="width: 15%;" data-i18n="colQty">الكمية</th>
+                  <th style="width: 20%;" data-i18n="colRate">سعر الوحدة</th>
+                  <th style="width: 15%;" data-i18n="colTotal">الإجمالي</th>
+                  <th class="no-print" style="width: 5%;"></th>
+                </tr>
+              </thead>
+              <tbody id="itemsTableBody">
+                <!-- Injected via JavaScript -->
+              </tbody>
+            </table>
+            <button id="addItemBtn" class="btn btn-ghost no-print">
+              <span>➕</span>
+              <span data-i18n="btnAddItem">إضافة بند جديد</span>
+            </button>
+          </div>
+
+          <!-- Bottom Totals & Notes -->
+          <div class="paper-footer">
+            <div class="notes-side">
+              <h4 data-i18n="notesTitle">ملاحظات وشروط الدفع:</h4>
+              <textarea id="invoiceNotes" class="paper-textarea" rows="3" placeholder="يرجى تحويل المبلغ خلال 14 يوماً من تاريخ الفاتورة...">شكراً لتعاملكم معنا. يرجى تحويل إجمالي المبلغ للحساب البنكي المعتمد خلال 14 يوماً من الاستلام.</textarea>
+              <div class="qr-placeholder">
+                <div class="qr-box">
+                  <span class="qr-text">ZATCA QR Ready</span>
+                </div>
+                <span class="qr-label" data-i18n="qrNotice">رمز استجابة الفوترة الإلكترونية</span>
+              </div>
+            </div>
+
+            <div class="totals-side">
+              <div class="total-row">
+                <span data-i18n="totSub">المجموع الفرعي:</span>
+                <span id="subTotalDisplay">0.00 SAR</span>
+              </div>
+              <div class="total-row tax-input-row">
+                <div class="tax-label-group">
+                  <span data-i18n="totVat">ضريبة القيمة المضافة:</span>
+                  <input type="number" id="taxRateInput" value="15" min="0" max="100" class="tax-rate-field">%
+                </div>
+                <span id="taxAmountDisplay">0.00 SAR</span>
+              </div>
+              <div class="total-row tax-input-row">
+                <div class="tax-label-group">
+                  <span data-i18n="totDiscount">الخصم التجاري:</span>
+                  <input type="number" id="discountInput" value="0" min="0" class="tax-rate-field">%
+                </div>
+                <span id="discountAmountDisplay">0.00 SAR</span>
+              </div>
+              <div class="total-row grand-total">
+                <span data-i18n="totGrand">الإجمالي النهائي:</span>
+                <span id="grandTotalDisplay">0.00 SAR</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VIEW 2: Invoices History / Ledger -->
+      <section id="historyView" class="view-section">
+        <div class="view-header">
+          <div>
+            <h2 data-i18n="historyTitle">سجل الفواتير الصادرة</h2>
+            <p class="text-muted" data-i18n="historySubtitle">إدارة وتتبع الفواتير وحالات الدفع</p>
+          </div>
+          <div class="history-actions">
+            <button id="clearAllBtn" class="btn btn-danger-ghost" data-i18n="btnClearAll">مسح السجل</button>
+          </div>
+        </div>
+
+        <div class="history-table-container">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th data-i18n="thInvNo">رقم الفاتورة</th>
+                <th data-i18n="thClient">العميل</th>
+                <th data-i18n="thDate">التاريخ</th>
+                <th data-i18n="thAmount">المبلغ الإجمالي</th>
+                <th data-i18n="thStatus">حالة الدفع</th>
+                <th data-i18n="thActions">إجراءات</th>
+              </tr>
+            </thead>
+            <tbody id="historyTableBody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- VIEW 3: SaaS Pricing Plans -->
+      <section id="pricingView" class="view-section">
+        <div class="pricing-header">
+          <span class="badge-accent" data-i18n="badgePricing">باقات مرنة</span>
+          <h2 data-i18n="pricingTitle">اختر الخطة المناسبة لحجم أعمالك</h2>
+          <p class="text-muted" data-i18n="pricingSubtitle">بدون عقود طويلة الأجل. يمكنك الترقية أو الإلغاء في أي وقت.</p>
+        </div>
+
+        <div class="pricing-grid">
+          <!-- Free Plan -->
+          <div class="pricing-card">
+            <div class="plan-header">
+              <h3 data-i18n="planFreeName">المجانية (Starter)</h3>
+              <div class="plan-price">0 <span>SAR / شهرياً</span></div>
+              <p class="plan-desc" data-i18n="planFreeDesc">للمستقلين والمشاريع الناشئة التي تحتاج فواتير فورية.</p>
+            </div>
+            <ul class="plan-features">
+              <li>✔ <span data-i18n="feat1">حتى 10 فواتير شهرياً</span></li>
+              <li>✔ <span data-i18n="feat2">تصدير PDF عالي الدقة</span></li>
+              <li>✔ <span data-i18n="feat3">حساب الضريبة المضافة التلقائي</span></li>
+              <li class="disabled">✖ <span data-i18n="feat4">شعار مخصص للشركة</span></li>
+              <li class="disabled">✖ <span data-i18n="feat5">ربط بوابات الدفع الإلكتروني</span></li>
+            </ul>
+            <button class="btn btn-secondary full-btn select-plan-btn" data-plan="free" data-i18n="btnCurrentPlan">خطتك الحالية</button>
+          </div>
+
+          <!-- Pro Plan -->
+          <div class="pricing-card popular">
+            <div class="popular-tag" data-i18n="mostPopular">الأكثر طلباً 🔥</div>
+            <div class="plan-header">
+              <h3 data-i18n="planProName">المحترفين (Pro)</h3>
+              <div class="plan-price">49 <span>SAR / شهرياً</span></div>
+              <p class="plan-desc" data-i18n="planProDesc">للشركات الصغيرة ورواد الأعمال الباحثين عن الأتمتة.</p>
+            </div>
+            <ul class="plan-features">
+              <li>✔ <span data-i18n="feat6">فواتير غير محدودة</span></li>
+              <li>✔ <span data-i18n="feat7">تخصيص الهوية والشعار بالكامل</span></li>
+              <li>✔ <span data-i18n="feat8">تصدير تقارير Excel و CSV</span></li>
+              <li>✔ <span data-i18n="feat9">تتبع حالات الدفع والتحصيل</span></li>
+              <li>✔ <span data-i18n="feat10">دعم فني سريع على مدار الساعة</span></li>
+            </ul>
+            <button class="btn btn-primary full-btn select-plan-btn" data-plan="pro" data-i18n="btnChoosePro">ترقية الآن إلى Pro</button>
+          </div>
+
+          <!-- Enterprise Plan -->
+          <div class="pricing-card">
+            <div class="plan-header">
+              <h3 data-i18n="planEntName">المؤسسات (Agency)</h3>
+              <div class="plan-price">129 <span>SAR / شهرياً</span></div>
+              <p class="plan-desc" data-i18n="planEntDesc">للشركات المتوسطة والوكالات ذات الفروع المتعددة.</p>
+            </div>
+            <ul class="plan-features">
+              <li>✔ <span data-i18n="feat11">كل مميزات باقة Pro</span></li>
+              <li>✔ <span data-i18n="feat12">تعدد المستخدمين وصلاحيات الفريق</span></li>
+              <li>✔ <span data-i18n="feat13">ربط برمجي عبر REST API</span></li>
+              <li>✔ <span data-i18n="feat14">سيرفرات مخصصة وأمان عالي</span></li>
+            </ul>
+            <button class="btn btn-secondary full-btn select-plan-btn" data-plan="agency" data-i18n="btnChooseAgency">التواصل مع المبيعات</button>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer no-print">
+      <p>
+        <span>Invoicify SaaS &copy; 2026 | تطوير:</span>
+        <a href="https://github.com/Tareq0001" target="_blank" rel="noopener">أ. طارق ابوعشي (Tareq Aboushi)</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">تم الإجراء بنجاح!</div>
+
+  <script src="app.js"></script>
+</body>
+</html>
